@@ -1,23 +1,30 @@
-import nodemailer from "nodemailer";
+const express = require('express')
+const cors = require('cors')
+const app= express()
+const mongoose = require('mongoose')
+const routes = require('./routes/routes')
+require("dotenv").config()
 
-const transport = nodemailer.createTransport({
-	service: "Gmail",
-	auth: {
-		user: process.env.MAIL_USER,
-		pass: process.env.MAIL_PASS,
-	},
-});
+app.use(
+	cors({
+	  origin:"http://localhost:4000/",
+	  methods: "GET,POST,PUT,DELETE, PATCH",
+	})
+  );
 
-const sendEmail = (name, email, info, key) => {
-	transport.sendMail({
-					from: process.env.MAIL_USER,
-					to: "as453196@gmail.com",
-					subject: "You added an asset",
-					html: `<h1>Asset Added</h1>
-		  <h2>Hello </h2>
-		  <p>Thank you for adding an asset.</p>`,
-				})
-				.catch((err) => console.log(err));
-};
+app.use((req,res,next)=> 
+{
+	console.log(req.path, req.method)
+	next()
+})
 
-export { sendEmail };
+app.use('/api/birthdayreminder',routes)
+
+mongoose.connect(process.env.MONGO_URI).then(()=>{
+	app.listen(process.env.port,()=>{
+		console.log("app is running on port",process.env.port)
+	})
+}).catch((error)=>{
+	console.log(error)
+})
+
