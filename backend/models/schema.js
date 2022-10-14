@@ -11,16 +11,8 @@ const userschema = new Schema({
         type:Number,
         required:true
     },
-    day:{
-        type:Number,
-        required:true
-    },
-    month:{
-        type:Number,
-        required:true
-    },
-    year:{
-        type:Number,
+    DOB:{
+        type:Date,
         required:true
     }
 

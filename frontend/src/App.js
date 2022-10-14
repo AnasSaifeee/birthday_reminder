@@ -7,31 +7,29 @@ import List from './List'
 
 function App() {
   var today= new Date()
-  
+  const [people, setPeople] = useState(null)
+     fetchdata()
   const fetchdata=async()=>{
-    const user=await fetch("http://localhost:4000/api/birthdayreminder/",{
-      method:"GET",
-      headers:{
-        Accept:"application/json",
-        "Content-Type" :"application/json"
-      }
-    }).then((res)=>
-     { return res.json()}
-    ).then((res)=>
-    { return res})
-    return user
+    const response=await fetch("http://localhost:4000/api/birthdayreminder/")
+    const json = await response.json()
+    
+    if(response.ok)
+    {
+         setPeople(json)
+    }
+
   }
-  const [people, setPeople] = useState(fetchdata())
+  
   console.log(people)
   return (
-    <h1>hey there</h1>
-    // <main>
-    //   <section className='container'>
-    //   <h3>{people.length} birthdays today</h3>
-    //     <List people={people} setpeople={setPeople} />
-    //     <button onClick={() => setPeople([])}>clear all</button>
-    //   </section>
-    // </main>
+
+    <main>
+      <section className='container'>
+      <h3>{people.length} birthdays today</h3>
+        <List people={people} setpeople={setPeople} />
+        <button onClick={() => setPeople([])}>clear all</button>
+      </section>
+    </main>
     
   )
 }
