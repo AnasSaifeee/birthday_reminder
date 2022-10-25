@@ -28,6 +28,7 @@ function App() {
   
   useEffect(()=>{
     console.log(people)
+    fetchdata()
   },[people])
   return (
 
@@ -35,7 +36,7 @@ function App() {
       <section className='container'>
       <h3>{people?.length} birthdays today</h3>
         {people && <List people={people} setpeople={setPeople} />}
-        <button onClick={() => fetchdata()}>clear all</button>
+        <button onClick={() =>setPeople([])}>clear all</button>
       </section>
     </main>
     

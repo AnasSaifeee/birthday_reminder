@@ -18,8 +18,7 @@ const sendEmail = (recieverName, recieverEmail, birthdayPersonName) => {
 			from: process.env.EMAIL,
 			to: recieverEmail,
 			subject: `CyPsi Birthday Notification`,
-			html: `<h1>HBD hai ${birthdayPersonName} ka</h1>
-		  <h2>Hello ${recieverName}</h2>`,
+			html: `It is ${birthdayPersonName}'s birthday today,wish them a very happy bdday ka`,
 		})
 		.catch((err) => console.log(err));
 };
