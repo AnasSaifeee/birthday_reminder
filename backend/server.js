@@ -1,30 +1,47 @@
-const express = require('express')
-const cors = require('cors')
-const app= express()
-const mongoose = require('mongoose')
-const routes = require('./routes/routes')
-require("dotenv").config()
+import mongoose from "mongoose";
+import app from "./app.js";
+import birthdays from "./models/birthdays.js";
+import { sendEmail } from "./utils/mail.js";
 
-app.use(
-	cors({
-	  origin:"http://localhost:4000/",
-	  methods: "GET,POST,PUT,DELETE, PATCH",
-	})
-  );
+const connectDB = async () => {
+	try {
+		mongoose.connect(process.env.MONOGODBURL, {
+			useNewUrlParser: true,
+			useUnifiedTopology: true,
+		});
+	} catch (err) {
+		console.error(err);
+		process.exit(1);
+	}
+};
 
-// app.use((req,res,next)=> 
-// {
-// 	console.log(req.path, req.method)
-// 	next()
-// })
-
-app.use('/api/birthdayreminder',routes)
-
-mongoose.connect(process.env.MONGO_URI).then(()=>{
-	app.listen(process.env.port,()=>{
-		console.log("app is running on port",process.env.port)
-	})
-}).catch((error)=>{
-	console.log(error)
-})
-
+const start = async () => {
+	try {
+		await connectDB();
+		app.listen(process.env.PORT, firstFunction);
+	} catch (err) {
+		console.error(err);
+		process.exit(1);
+	}
+};
+const firstFunction = () => {
+	console.log(`Server is listening on port ${process.env.PORT}...`);
+	setInterval(async () => {
+		console.log(1);
+		let todayMonth = new Date().getMonth() + 1;
+		let todayDate = new Date().getDate();
+		let todayBirthdays = await birthdays.aggregate([{ $project: { m: { $month: "$dob" }, d: { $dayOfMonth: "$dob" } } }, { $match: { m: todayMonth, d: todayDate } }]);
+		let allUsers = await birthdays.find({});
+		if (todayBirthdays.length) {
+			todayBirthdays.forEach(async (birthday) => {
+				let data = await birthdays.findById(birthday._id);
+				allUsers.forEach((user) => {
+					if (user.id !== data.id) {
+						sendEmail(user.name, user.email, data.name);
+					}
+				});
+			});
+		}
+	}, 8640);
+};
+start();
