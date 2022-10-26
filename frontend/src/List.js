@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import * as AiIcon from 'react-icons/ai'
 const List = ({people,setpeople}) => {
 
 
@@ -23,7 +24,8 @@ var today = new Date()
                 {name}
                 <p>{age}years</p>
                 </h4>
-                <button className='remove' onClick={()=>handleremove(id)}  >remove</button>
+                <AiIcon.AiFillCloseCircle><button className='remove' onClick={()=>handleremove(id)}  >remove</button></AiIcon.AiFillCloseCircle>
+                
             </div>
             </article>
             </>
